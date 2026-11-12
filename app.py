@@ -20,7 +20,7 @@ RISK_FREE = 0.065
 
 CSS = """<style>
 .stApp{background:#0d0f14}
-.block-container{max-width:980px;padding-top:2rem}
+.block-container{max-width:1100px;padding-top:2rem}
 .card{background:#151821;border:1px solid #232734;border-radius:14px;padding:18px 20px;margin:14px 0}
 .card h3{color:#f5c542;font-size:1.02rem;margin:0 0 10px 0;font-weight:700}
 .sub{color:#9aa3b2;font-size:.8rem;line-height:1.45;margin:4px 0 10px 0}
@@ -29,6 +29,11 @@ CSS = """<style>
 .t th{color:#8b93a3;font-size:.68rem;text-transform:uppercase;text-align:right;padding:8px 6px;border-bottom:1px solid #232734;white-space:nowrap}
 .t td{padding:9px 6px;text-align:right;border-bottom:1px solid #1d212c;color:#e5e7eb;white-space:nowrap}
 .t th.l,.t td.l{text-align:left}
+.t td.w{white-space:normal;min-width:210px;max-width:280px;line-height:1.35;color:#b8c0cc;text-align:left}
+.t td.c,.t th.c{text-align:center}
+.t tbody tr:hover td{background:#1a1e2a}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.bull{background:#0f3d2a;color:#4ade80}.pill.bear{background:#4a1519;color:#f87171}
 .pos{color:#22c55e}.neg{color:#ef4444}
 .badge{padding:2px 9px;border-radius:6px;font-size:.7rem;font-weight:700}
 .badge.call{background:#0f3d2a;color:#4ade80}.badge.put{background:#4a1519;color:#f87171}
@@ -59,11 +64,20 @@ def badge(t):
     return f'<span class="badge {t.lower()}">{t}</span>'
 
 
-def table(headers, rows, left=()):
-    th = "".join(f'<th class="{"l" if i in left else ""}">{h}</th>' for i, h in enumerate(headers))
+def table(headers, rows, left=(), wrap=(), center=()):
+    def cls(i, tag):
+        c = []
+        if i in left or i in wrap:
+            c.append("l")
+        if i in wrap and tag == "td":
+            c.append("w")
+        if i in center:
+            c.append("c")
+        return " ".join(c)
+
+    th = "".join(f'<th class="{cls(i, "th")}">{h}</th>' for i, h in enumerate(headers))
     body = "".join(
-        "<tr>" + "".join(f'<td class="{"l" if i in left else ""}">{c}</td>' for i, c in enumerate(r)) + "</tr>"
-        for r in rows
+        "<tr>" + "".join(f'<td class="{cls(i, "td")}">{c}</td>' for i, c in enumerate(r)) + "</tr>" for r in rows
     )
     return f'<div style="overflow-x:auto"><table class="t"><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>'
 
@@ -344,10 +358,10 @@ else:
     # 5. full interpretation
     full = sp.sort_values("Value", ascending=False)
     card("Full strike-level interpretation (Open Interest &amp; buyer/seller read)", table(
-        ["Strike", "Type", "Bucket", "Chng OI", "%Chng OI", "Raw signal", "Buyer/Seller read", "Underlying bias"],
-        [[n0(r.Strike), badge(r.Type), r.Bucket, sgn(r.ChngOI), sgn(r.PctChngOI, 2, "%"), r.Raw, r.Read,
-          f'<span class="{"pos" if r.Bias > 0 else "neg"}"><b>{"Bullish" if r.Bias > 0 else "Bearish"}</b></span>']
-         for r in full.itertuples()], left=(2, 5, 6)))
+        ["Strike", "Type", "Bucket", "Chng OI", "%Chng OI", "Raw signal", "Underlying bias", "Buyer / Seller read"],
+        [[n0(r.Strike), badge(r.Type), r.Bucket, sgn(r.ChngOI), sgn(r.PctChngOI, 2, "%"), r.Raw,
+          f'<span class="pill {"bull" if r.Bias > 0 else "bear"}">{"Bullish" if r.Bias > 0 else "Bearish"}</span>', r.Read]
+         for r in full.itertuples()], left=(2, 5), wrap=(7,), center=(6,)))
 
 # ── BhavCopy-based sections ──
 if chain.empty:
