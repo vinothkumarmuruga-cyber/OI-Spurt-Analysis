@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="NSE F&O — OI Spurts Analyser", page_icon="📊", layout="centered")
+st.set_page_config(page_title="NSE F&O — OI Spurts Analyser", page_icon="📊", layout="wide")
 
 DATA_DIR = Path(__file__).parent / "data"
 INDEX_SYMS = {"NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY", "NIFTYNXT50"}
@@ -20,7 +20,21 @@ RISK_FREE = 0.065
 
 CSS = """<style>
 .stApp{background:#0d0f14}
-.block-container{max-width:1100px;padding-top:2rem}
+.block-container{max-width:1400px;padding-top:3.5rem;padding-left:2rem;padding-right:2rem}
+header[data-testid="stHeader"]{background:#0d0f14;border-bottom:1px solid #232734}
+header[data-testid="stHeader"] *{color:#e5e7eb !important}
+header[data-testid="stHeader"] svg{fill:#e5e7eb}
+section[data-testid="stSidebar"]{background:#11141b}
+.stApp label,.stApp [data-testid="stWidgetLabel"] p,.stApp [data-testid="stCaptionContainer"],.stApp [data-testid="stCaptionContainer"] p,section[data-testid="stSidebar"] p,section[data-testid="stSidebar"] small{color:#c9d1dd !important}
+[data-testid="stFileUploaderDropzone"]{background:#1a1e2a;border:1px dashed #3a4256}
+[data-testid="stFileUploaderDropzone"] *{color:#c9d1dd}
+[data-testid="stFileUploaderDropzone"] button{background:#f5c542;color:#111 !important;border:none;font-weight:700}
+.stButton>button{background:#f5c542;color:#111 !important;border:none;font-weight:800;font-size:1rem;padding:.6rem 1rem;border-radius:10px}
+.stButton>button:hover{background:#ffd75e;color:#111 !important}
+.stButton>button p{color:#111 !important;font-weight:800}
+.stButton>button:disabled{background:#3b3524;color:#d9c98a !important;opacity:1;cursor:not-allowed}
+.stButton>button:disabled p{color:#d9c98a !important}
+[data-testid="stSelectbox"] div[data-baseweb="select"]>div{background:#f4f4f2;color:#111}
 .card{background:#151821;border:1px solid #232734;border-radius:14px;padding:18px 20px;margin:14px 0}
 .card h3{color:#f5c542;font-size:1.02rem;margin:0 0 10px 0;font-weight:700}
 .sub{color:#9aa3b2;font-size:.8rem;line-height:1.45;margin:4px 0 10px 0}
